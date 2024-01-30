@@ -44,21 +44,24 @@ This project involves building a fully-functioning e-commerce application REST A
 To run the project locally and start developing, follow these steps:
 
 1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/OFursova/codecademy-e-commerce.git
+```bash
+git clone https://github.com/OFursova/codecademy-e-commerce.git
+```
 
 ## Install Dependencies
-
+```bash
 cd e-commerce-api
 npm install
+```
 
 ## Set Up the Database
 
 - Create a Postgres database and update the database configuration in your project.
 
 ## Start the Development Server
-
+```bash
 npm start
+```
 
 ## Access the API Documentation
 
