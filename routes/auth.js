@@ -9,7 +9,7 @@ router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
         // Create a user in your database
-        await db.run('INSERT INTO user (username, email, password) VALUES (?, ?)', [username, email, password]);
+        await db.run('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [username, email, password]);
         res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
         console.error(error);

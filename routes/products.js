@@ -33,8 +33,6 @@ router.post('/', isAdmin, async (req, res) => {
 // Get all products (GET request)
 router.get('/', async (req, res) => {
     try {
-        const insertProduct = 'INSERT INTO product (name, description, price, quantityInStock) VALUES (?, ?, ?, ?)';
-        const result = await db.run(insertProduct, ["abs", "chh", 12.5, 1000]);
         // Retrieve all products from the 'product' table
         const products = await db.all('SELECT * FROM product');
     console.log(result, products);

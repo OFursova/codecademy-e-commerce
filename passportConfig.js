@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database.js');
 
 passport.use(new LocalStrategy((username, password, done) => {
+    console.log(db.get('SELECT * FROM user WHERE username = ? AND password = ?', [username, password]));
     // Verify the user in your database
     db.get('SELECT * FROM user WHERE username = ? AND password = ?', [username, password], (err, user) => {
         if (err) {
