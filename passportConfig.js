@@ -4,7 +4,7 @@ const db = require('./database.js');
 
 passport.use(new LocalStrategy((username, password, done) => {
     // Verify the user in your database
-    db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
+    db.get('SELECT * FROM user WHERE username = ? AND password = ?', [username, password], (err, user) => {
         if (err) {
             return done(err);
         }
@@ -21,7 +21,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
     // Retrieve the user from your database
-    db.get('SELECT * FROM users WHERE id = ?', [id], (err, user) => {
+    db.get('SELECT * FROM user WHERE id = ?', [id], (err, user) => {
         done(err, user);
     });
 });
