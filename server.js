@@ -5,6 +5,8 @@ const md5 = require("md5");
 const bodyParser = require("body-parser");
 
 const authRoutes = require('./routes/auth.js');
+const productRoutes = require('./routes/products.js');
+const userRoutes = require('./routes/users.js');
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.get("/", (req, res, next) => {
 
 // Other API endpoints
 app.use('/auth', authRoutes);
+app.use('/products', productRoutes);
+app.use('/users', userRoutes);
 
 // Default response for any other request
 app.use(function(req, res){
