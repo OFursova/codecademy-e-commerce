@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database.js');
+const db = require('../database/pool');
 const passport = require('passport');
 
 // Create a new cart for a user

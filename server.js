@@ -1,5 +1,5 @@
 const express = require("express");
-const db = require("./database.js");
+const pool = require('./database/pool.js');
 const passport = require('./passportConfig');
 const md5 = require("md5");
 const bodyParser = require("body-parser");

@@ -1,15 +1,19 @@
 const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const db = require('../database.js');
+const db = require('../database/pool');
 const router = express.Router();
 
 // Registration route
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: 'All fields (username, email, password) are required' });
+        }
         // Create a user in your database
-        await db.run('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [username, email, password]);
+        await db.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, password]);
         res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
         console.error(error);

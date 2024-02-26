@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database.js');
+const db = require('../database/pool');
 
 // Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {

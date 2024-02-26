@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database.js');
+const db = require('../database/pool');
 
 // GET all users
 router.get('/', async (req, res) => {
     try {
-        const users = await db.all('SELECT * FROM user');
+        const result = await db.query('SELECT * FROM users');
+        const users = result.rows;
         res.json(users);
     } catch (error) {
         console.error(error);
@@ -17,7 +18,8 @@ router.get('/', async (req, res) => {
 router.get('/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
-        const user = await db.get('SELECT * FROM user WHERE id = ?', [userId]);
+        const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+        const user = result.rows[0];
         if (user) {
             res.json(user);
         } else {
