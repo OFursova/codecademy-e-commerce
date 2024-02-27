@@ -24,13 +24,9 @@ passport.use(new LocalStrategy({
             if (!isMatch) {
                 return done(null, false, { message: 'Incorrect email or password' });
             }
+
             return done(null, user);
         });
-        // if (user.password !== password) {
-        //     return done(null, false, { message: 'Incorrect email or password' });
-        // }
-
-        //return done(null, user);
 
     } catch (err) {
         return done(err);
