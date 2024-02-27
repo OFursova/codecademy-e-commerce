@@ -11,27 +11,26 @@ passport.use(new LocalStrategy({
     // Verify the user in your database
     try {
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-        console.log(result);
 
         const user = result.rows[0];
         if (!user) {
-            return done(null, false, { message: 'Incorrect 1email or password' });
+            return done(null, false, { message: 'Incorrect email or password' });
         }
-        // Compare hashed passwords
-        // bcrypt.compare(password, user.password, (err, isMatch) => {
-        //     if (err) {
-        //         return done(err);
-        //     }
-        //     if (!isMatch) {
-        //         return done(null, false, { message: 'Incorrect email or password' });
-        //     }
-        //     return done(null, user);
-        // });
-        if (user.password !== password) {
-            return done(null, false, { message: 'Incorrect 2email or password' });
-        }
+        //Compare hashed passwords
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+            if (err) {
+                return done(err);
+            }
+            if (!isMatch) {
+                return done(null, false, { message: 'Incorrect email or password' });
+            }
+            return done(null, user);
+        });
+        // if (user.password !== password) {
+        //     return done(null, false, { message: 'Incorrect email or password' });
+        // }
 
-        return done(null, user);
+        //return done(null, user);
 
     } catch (err) {
         return done(err);
