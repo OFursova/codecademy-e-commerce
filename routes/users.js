@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/pool');
+const bcrypt = require('bcrypt');
 
 // GET all users
 router.get('/', async (req, res) => {
@@ -34,11 +35,13 @@ router.get('/:userId', async (req, res) => {
 // PUT (update) user by ID
 router.put('/:userId', async (req, res) => {
     const { userId } = req.params;
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     try {
-        const result = await db.run('UPDATE user SET name = ?, email = ?, password = ? WHERE id = ?', [name, email, password, userId]);
-        if (result.changes > 0) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const result = await db.query('UPDATE users SET username = $1, email = $2, password = $3 WHERE id = $4', [username, email, hashedPassword, userId]);
+        
+        if (result.rowCount > 0) {
             res.json({ message: 'User updated successfully' });
         } else {
             res.status(404).json({ message: 'User not found' });
