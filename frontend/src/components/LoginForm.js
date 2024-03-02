@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/LoginForm.css';
 
+const apiUrl = process.env.API_URL || 'http://127.0.0.1:8000';
+
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -21,12 +23,21 @@ const LoginForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      // Make a request to your login endpoint
-      // Handle authentication logic here
+      const response = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
       console.log('Login data:', formData);
       
-      // Redirect to dashboard or other page on successful login
-      navigate('/dashboard');
+      if (response.ok) {
+        navigate('/dashboard');
+      } else {
+        console.error('Login failed');
+      }
     } catch (error) {
       console.error('Error logging in:', error);
     }
@@ -37,12 +48,12 @@ const LoginForm = () => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="text"
-            id="username"
-            name="username"
-            value={formData.username}
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             required
           />

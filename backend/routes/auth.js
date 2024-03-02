@@ -5,7 +5,6 @@ const db = require('../database/pool');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-// Registration route
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -24,10 +23,28 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login route
 router.post('/login', passport.authenticate('local'), (req, res) => {
     const { password, ...userWithoutPassword } = req.user;
     res.status(200).json({ message: 'Login successful', user: userWithoutPassword });
+});
+
+router.get('/logout', (req, res) => {
+    req.logout(function (err) {
+        if (err) {
+            console.error('Error logging out:', err);
+            res.status(500).json({ message: 'Error logging out' });
+        } else {
+            res.status(200).json({ message: 'Logout successful' });
+        }
+    });
+});
+
+router.get('/check-auth', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(401);
+    }
 });
 
 module.exports = router;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/RegistrationForm.css';
 
-const apiUrl = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000'
+const apiUrl = process.env.API_URL || 'http://127.0.0.1:8000';
 
 const RegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -32,10 +32,8 @@ const RegistrationForm = () => {
                 body: JSON.stringify(formData)
             });
             if (response.ok) {
-                // Registration successful, redirect to login page
                 navigate('/login');
             } else {
-                // Handle registration error
                 console.error('Registration failed');
             }
         } catch (error) {
