@@ -4,6 +4,8 @@ const cors = require('cors');
 const passport = require('./passportConfig');
 const md5 = require("md5");
 const bodyParser = require("body-parser");
+const session = require('express-session'); 
+require('dotenv').config();
 
 const authRoutes = require('./routes/auth.js');
 const productRoutes = require('./routes/products.js');
@@ -18,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(express.json());
-app.use(require('express-session')({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+app.use(require('express-session')({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
