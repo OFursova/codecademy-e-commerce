@@ -29,6 +29,7 @@ const RegistrationForm = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(formData)
             });
             if (response.ok) {

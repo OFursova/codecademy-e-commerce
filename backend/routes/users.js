@@ -1,55 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database/pool');
-const bcrypt = require('bcrypt');
+const UserService = require('../services/UserService');
 
-// GET all users
-router.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM users');
-        const users = result.rows;
-        res.json(users);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error retrieving users' });
-    }
-});
+const UserServiceInstance = new UserService();
 
-// GET user by ID
-router.get('/:userId', async (req, res) => {
-    const { userId } = req.params;
-    try {
-        const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
-        const user = result.rows[0];
-        if (user) {
-            res.json(user);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error retrieving user' });
-    }
-});
+module.exports = (app) => {
 
-// PUT (update) user by ID
-router.put('/:userId', async (req, res) => {
-    const { userId } = req.params;
-    const { username, email, password } = req.body;
+  app.use('/api/users', router);
+
+  router.get('/:userId', async (req, res, next) => {
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const result = await db.query('UPDATE users SET username = $1, email = $2, password = $3 WHERE id = $4', [username, email, hashedPassword, userId]);
-        
-        if (result.rowCount > 0) {
-            res.json({ message: 'User updated successfully' });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error updating user' });
+      const { userId } = req.params;
+    
+      const response = await UserServiceInstance.get({ id: userId });
+      res.status(200).send(response);
+    } catch(err) {
+      next(err);
     }
-});
+  });
 
-module.exports = router;
+  router.put('/:userId', async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const data = req.body;
+
+      const response = await UserServiceInstance.update({ id: userId, ...data });
+      res.status(200).send(response);
+    } catch(err) {
+      next(err);
+    }
+  });
+
+}

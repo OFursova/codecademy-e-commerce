@@ -8,7 +8,7 @@ const useAuthentication = () => {
 
     const checkAuthentication = async () => {
       try {
-        const response = await fetch(`${apiUrl}/auth//check-auth`, {
+        const response = await fetch(`${apiUrl}/auth/check-auth`, {
           method: 'GET',
           credentials: 'include'
         });

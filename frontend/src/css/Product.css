@@ -1,0 +1,22 @@
+.product {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .product img {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+  }
+  
+  .product-info {
+    flex: 1;
+  }
+  
+  /* ProductList.css */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  

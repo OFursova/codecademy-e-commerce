@@ -1,18 +1,22 @@
-const pool = require('./pool');
+const { Client } = require('pg');
+require('dotenv').config();
+const { DB } = require('../config');
 
 // Define SQL queries to create tables
 const createTablesQuery = `
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
     username VARCHAR(255),
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
+    google JSON,
+    facebook JSON,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS products (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
     name VARCHAR(255),
     description TEXT,
     price REAL,
@@ -22,33 +26,42 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    user_id BIGINT NOT NULL,
     status VARCHAR(255),
-    total_amount REAL,
+    total REAL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS carts (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    user_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE IF NOT EXISTS order_product (
-    order_id INTEGER REFERENCES orders(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity INTEGER,
-    PRIMARY KEY (order_id, product_id)
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT,
+    price INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-CREATE TABLE IF NOT EXISTS cart_product (
-    cart_id INTEGER REFERENCES carts(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity INTEGER,
-    PRIMARY KEY (cart_id, product_id)
+CREATE TABLE IF NOT EXISTS cart_items (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    cart_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT,
+    FOREIGN KEY (cart_id) REFERENCES carts(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 `;
 
@@ -65,18 +78,25 @@ INSERT INTO products (name, description, price, quantity_in_stock) VALUES
 
 // Function to create tables and insert default rows
 async function setupSchema() {
-    const client = await pool.connect();
+    const db = new Client({
+        user: DB.PGUSER,
+        host: DB.PGHOST,
+        database: DB.PGDATABASE,
+        password: DB.PGPASSWORD,
+        port: DB.PGPORT
+    });
+
+    await db.connect();
+
     try {
-        await client.query(createTablesQuery);
-        await client.query(insertDataQuery);
+        await db.query(createTablesQuery);
+        await db.query(insertDataQuery);
+        await db.end();
+
         console.log('Schema created and data inserted successfully');
     } catch (err) {
         console.error('Error setting up schema', err);
-    } finally {
-        client.release(); // Release the client back to the pool
-        pool.end(); // End the pool's process
     }
 }
 
-// Call the function to set up schema
 setupSchema();

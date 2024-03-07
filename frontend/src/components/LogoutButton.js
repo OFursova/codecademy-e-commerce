@@ -8,7 +8,11 @@ const LogoutButton = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch(`${apiUrl}/auth/logout`);
+            const response = await fetch(`${apiUrl}/auth/logout`, {
+                method: 'POST', 
+                credentials: 'include'
+              });
+              
             if (response.ok) {
                 navigate('/login');
             } else {

@@ -6,7 +6,7 @@ const apiUrl = process.env.API_URL || 'http://127.0.0.1:8000';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
 
@@ -28,6 +28,7 @@ const LoginForm = () => {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
 
